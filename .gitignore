@@ -1,0 +1,29 @@
+# Ambiente virtual
+venv/
+.venv/
+
+# Arquivos e pastas temporárias do Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Arquivos de ambiente
+.env
+
+# Arquivos de log, dump ou temporários
+*.log
+*.bak
+*.tmp
+*.swp
+
+# Arquivos de cache do editor (VS Code, PyCharm etc.)
+.vscode/
+.idea/
+
+# Excel (se não quiser subir planilhas de controle)
+*.xlsx
+!src/**/dados/*.xlsx  # exceção: manter os essenciais em src/aprovacao_lta/dados/
+
+# PDF temporários gerados
+pdfs/

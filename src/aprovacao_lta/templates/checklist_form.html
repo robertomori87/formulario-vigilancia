@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Checklist de Aprovação de Projeto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <style>
+        /* Definindo a fonte Times New Roman para uso global ou específico */
+        .font-times-new-roman {
+            font-family: "Times New Roman", Times, serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px; /* Aumentado para acomodar mais conteúdo */
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        input[type="radio"] {
+            margin-right: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        /* Estilos para o cabeçalho */
+        .header-section {
+            margin-bottom: 24px;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-content img {
+            height: 80px;
+            width: auto;
+            margin-right: 20px;
+        }
+        .header-text {
+            flex-grow: 1;
+            text-align: center;
+            padding-right: 20px;
+        }
+        .header-text p {
+            font-size: 1.125rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .header-separator {
+            border-top: 2px solid #ccc;
+            margin-top: 16px;
+        }
+        /* Estilo para o título principal */
+        .main-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        /* Estilo para os subtítulos do formulário */
+        .form-subtitle {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .question-block {
+            background-color: #f8f8f8;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .question-block p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .question-block .question-text {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+        .response-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            align-items: center; /* Alinha verticalmente os radios e o texto */
+        }
+        .response-options label {
+            display: inline-flex; /* Para alinhar o input radio com o texto */
+            align-items: center;
+            margin-bottom: 0; /* Remove margem extra para alinhamento */
+        }
+        .response-options input[type="radio"] {
+            margin-right: 5px;
+            margin-bottom: 0; /* Remove margem extra */
+        }
+        .conditional-fields {
+            margin-top: 15px;
+            padding: 15px;
+            border-left: 3px solid #3498db;
+            background-color: #ecf6fd;
+            border-radius: 4px;
+        }
+        .conditional-fields label {
+            font-size: 0.95rem;
+            color: #555;
+        }
+        /* Estilo para o campo de observação de fluxo, para destacá-lo um pouco */
+        .observacao-fluxo-text {
+            font-style: italic;
+            color: #626262;
+            font-size: 0.95rem;
+            margin-top: -5px; /* Puxa um pouco para cima */
+            margin-bottom: 15px;
+        }
+        /* Estilo para o campo "Não se Aplica" agora como informativo */
+        .nao-se-aplica-info {
+            font-weight: bold;
+            color: #d9534f; /* Cor vermelha para destaque */
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #fdd;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+    <script>
+        // Função para mostrar/esconder campos condicionais com base na resposta
+        function toggleConditionalFields(questionId, response) {
+            const atendeField = document.getElementById(`atende_${questionId}`);
+            const naoAtendeField = document.getElementById(`nao_atende_${questionId}`);
+            const medidaMitigatoriaField = document.getElementById(`medida_mitigatoria_${questionId}`);
+            // Removido: justificativaNaoSeAplicaField
+
+            // Esconde todos os campos condicionais primeiro
+            if (atendeField) atendeField.parentElement.style.display = 'none';
+            if (naoAtendeField) naoAtendeField.parentElement.style.display = 'none';
+            if (medidaMitigatoriaField) medidaMitigatoriaField.parentElement.style.display = 'none';
+
+            if (response === 'SIM') {
+                if (atendeField) atendeField.parentElement.style.display = 'block';
+            } else if (response === 'NÃO') {
+                if (naoAtendeField) naoAtendeField.parentElement.style.display = 'block';
+                if (medidaMitigatoriaField) medidaMitigatoriaField.parentElement.style.display = 'block';
+            }
+            // Removida a lógica para 'NAO SE APLICA'
+        }
+
+        // Adiciona um listener para cada conjunto de radios quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name^="resposta_"]').forEach(radio => {
+                if (radio.checked) {
+                    const questionId = radio.name.split('_')[1];
+                    toggleConditionalFields(questionId, radio.value);
+                }
+
+                radio.addEventListener('change', function() {
+                    const questionId = this.name.split('_')[1];
+                    toggleConditionalFields(questionId, this.value);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="header-content">
+                <img alt="Logo Sertãozinho" src="{{ url_for('static', filename='logo_sertaozinho.jpeg') }}"/>
+                <div class="header-text font-times-new-roman">
+                    <p>SECRETARIA MUNICIPAL DE SAÚDE DE SERTÃOZINHO-SP</p>
+                    <p>VIGILÂNCIA SANITÁRIA</p>
+                </div>
+            </div>
+            <hr class="header-separator"/>
+        </div>
+        <h2 class="main-title font-times-new-roman">Checklist de Aprovação de Projeto</h2>
+        <form action="{{ url_for('checklist_bp.salvar_checklist_projeto') }}" method="post">
+            <h3 class="form-subtitle">Itens do Checklist:</h3>
+
+            {% for pergunta in perguntas %}
+                <div class="question-block">
+                    <p class="question-text"><strong>Item {{ pergunta.numero_item }}:</strong> {{ pergunta.pergunta }}</p>
+                    <p><strong>Texto Legal:</strong> {{ pergunta.texto_legal }}</p>
+                    <p><strong>Interpretação Legal:</strong> {{ pergunta.interpretacao_legal }}</p>
+                    <p><strong>Orientação Documentação:</strong> {{ pergunta.orientacao_documentacao }}</p>
+                    <p><strong>Base Legal:</strong> {{ pergunta.base_legal }}</p>
+                    <p class="observacao-fluxo-text"><strong>Observação Fluxo:</strong> {{ pergunta.observacao_fluxo }}</p>
+
+                    {% if pergunta.nao_se_aplica_status %} {# Assumindo que você terá uma coluna assim ou algo similar #}
+                        <p class="nao-se-aplica-info">Esta pergunta não se aplica a este tipo de projeto.</p>
+                    {% endif %}
+
+                    <div class="response-options">
+                        <label>
+                            <input name="resposta_{{ pergunta.id }}" onchange="toggleConditionalFields('{{ pergunta.id }}', this.value)" required type="radio" value="SIM"
+                                {% if pergunta.resposta == 'SIM' %}checked{% endif %} /> SIM
+                        </label>
+                        <label>
+                            <input name="resposta_{{ pergunta.id }}" onchange="toggleConditionalFields('{{ pergunta.id }}', this.value)" type="radio" value="NÃO"
+                                {% if pergunta.resposta == 'NÃO' %}checked{% endif %} /> NÃO
+                        </label>
+                        {# REMOVIDO: Input de rádio para NAO SE APLICA #}
+                    </div>
+
+                    <div class="conditional-fields" id="conditional_fields_{{ pergunta.id }}" style="display: none;">
+                        <div id="atende_{{ pergunta.id }}" style="display: none;">
+                            <label>Atende (Marque se SIM):</label>
+                            <input name="atende_{{ pergunta.id }}" type="checkbox" value="true" {% if pergunta.atende %}checked{% endif %} />
+                        </div>
+                        <div id="nao_atende_{{ pergunta.id }}" style="display: none;">
+                            <label>Não Atende (Marque se NÃO):</label>
+                            <input name="nao_atende_{{ pergunta.id }}" type="checkbox" value="true" {% if pergunta.nao_atende %}checked{% endif %} />
+                        </div>
+                        <div id="medida_mitigatoria_{{ pergunta.id }}" style="display: none;">
+                            <label>Medida Mitigatória (Para 'NÃO'):</label>
+                            <textarea name="medida_mitigatoria_{{ pergunta.id }}" rows="3">{{ pergunta.medida_mitigatoria if pergunta.medida_mitigatoria is not none else '' }}</textarea>
+                        </div>
+                        {# REMOVIDO: Div para justificativa_nao_se_aplica #}
+                    </div>
+                    <label>Comentário do Requerente:</label>
+                    <textarea name="comentario_requerente_{{ pergunta.id }}" rows="2">{{ pergunta.comentario_requerente if pergunta.comentario_requerente is not none else '' }}</textarea>
+                    <label>Comentário do Avaliador:</label>
+                    <textarea name="comentario_avaliador_{{ pergunta.id }}" rows="2">{{ pergunta.comentario_avaliador if pergunta.comentario_avaliador is not none else '' }}</textarea>
+                </div>
+            {% endfor %}
+            <button type="submit">Salvar Checklist</button>
+        </form>
+    </div>
+</body>
+</html>

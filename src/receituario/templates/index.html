@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisição de Notificação de Receita</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Definindo a fonte Times New Roman para uso global ou específico */
+        .font-times-new-roman {
+            font-family: "Times New Roman", Times, serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            box-sizing: border;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        input[type="radio"] {
+            margin-right: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #third_party_fields {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #cccccc;
+            border-radius: 8px;
+            background-color: #f8f8f8;
+        }
+        #third_party_fields label {
+            font-size: 0.95rem;
+            color: #555;
+        }
+        #third_party_fields input {
+            background-color: #ffffff;
+        }
+        /* Estilos para o cabeçalho */
+        .header-section {
+            margin-bottom: 24px; /* Espaço abaixo do cabeçalho */
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinha logo à esquerda e texto à direita */
+        }
+        .header-content img {
+            height: 80px; /* Altura do logo */
+            width: auto;
+            margin-right: 20px; /* Espaço entre logo e texto */
+        }
+        .header-text {
+            flex-grow: 1; /* Permite que o texto ocupe o espaço restante */
+            text-align: center; /* Centraliza o texto */
+            padding-right: 20px; /* Adiciona um padding para centralizar melhor o texto visualmente */
+        }
+        .header-text p {
+            font-size: 1.125rem; /* Equivalente a 18px, próximo de 12pt */
+            font-weight: 700; /* Negrito */
+            line-height: 1.2; /* Espaçamento entre linhas */
+        }
+        .header-separator {
+            border-top: 2px solid #ccc; /* Linha horizontal */
+            margin-top: 16px; /* Espaço acima da linha */
+        }
+        /* Estilo para o título principal */
+        .main-title {
+            font-size: 1.875rem; /* Equivalente a 30px, maior e mais destacado */
+            font-weight: 800; /* Mais proeminente */
+            color: #1a202c; /* Cor mais escura para ênfase */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        /* Estilo para os subtítulos do formulário */
+        .form-subtitle {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 1.3rem; /* Ajustado para ser maior que os campos, menor que o título principal */
+            font-weight: bold;
+            margin-top: 25px; /* Espaço antes do subtítulo */
+            margin-bottom: 10px; /* Espaço depois do subtítulo */
+            color: #34495e;
+        }
+    </style>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Novo cabeçalho do HTML, igual ao do PDF -->
+        <div class="header-section">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='logo_sertaozinho.jpeg') }}" alt="Logo Sertãozinho">
+                <div class="header-text font-times-new-roman">
+                    <p>SECRETARIA MUNICIPAL DE SAÚDE DE SERTÃOZINHO-SP</p>
+                    <p>VIGILÂNCIA SANITÁRIA</p>
+                </div>
+            </div>
+            <hr class="header-separator">
+        </div>
+
+        <!-- Título principal, agora maior e mais destacado -->
+        <h2 class="main-title font-times-new-roman">REQUISIÇÃO DE NOTIFICAÇÃO DE RECEITA</h2>
+
+        <form action="/enviar" method="post" onsubmit="return validarFormulario()">
+            <h3 class="form-subtitle">Informações do Requisitante:</h3>
+            <label>Nome/Razão Social:</label>
+            <input type="text" name="nome" id="nome" required>
+
+            <label>CPF/CNPJ:</label>
+            <input type="text" name="cpf_cnpj" id="cpf_cnpj" required>
+
+            <label>Telefone:</label>
+            <input type="text" name="telefone" id="telefone" required>
+
+            <h3 class="form-subtitle">Informações do Responsável Técnico:</h3>
+            <label>Nome do Responsável Técnico:</label>
+            <input type="text" name="responsavel" id="responsavel" required>
+
+            <label>Conselho Profissional:</label><br>
+            <input type="radio" name="conselho" value="Medicina" required> Medicina
+            <input type="radio" name="conselho" value="Veterinária"> Veterinária
+            <input type="radio" name="conselho" value="Odontologia"> Odontologia<br><br>
+
+            <label>Número do Conselho:</label>
+            <input type="text" name="numero_conselho" id="numero_conselho" required>
+
+            <label>Endereço do Estabelecimento:</label>
+            <input type="text" name="endereco" required>
+
+            <h3 class="form-subtitle">Informações do autorizado para retirada:</h3>
+            <label>Entrega será realizada para terceiro?</label><br>
+            <input type="radio" name="has_third_party" value="yes" id="third_party_yes" checked> Sim
+            <input type="radio" name="has_third_party" value="no" id="third_party_no"> Não
+            <br><br>
+
+            <div id="third_party_fields">
+                <label>Nome do Terceiro Autorizado:</label>
+                <input type="text" name="nome_terceiro" id="nome_terceiro" required>
+
+                <label>CPF do Terceiro:</label>
+                <input type="text" name="cpf_terceiro" id="cpf_terceiro" required>
+            </div>
+
+            <h3 class="form-subtitle">Informações de Quantitativos:</h3>
+            <label>Receita A (Quantidade de Talonário(s)):</label>
+            <input type="text" name="receita_a">
+
+            <label>Receita B (Quantidade de Número(s)):</label>
+            <input type="text" name="receita_b">
+
+            <label>Receita B2 (Quantidade de Número(s)):</label>
+            <input type="text" name="receita_b2">
+
+            <label>Retinoides (Quantidade de Número(s)):</label>
+            <input type="text" name="retinoides">
+
+            <label>Talidomida (Quantidade de Talonário(s))):</label>
+            <input type="text" name="talidomida">
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>

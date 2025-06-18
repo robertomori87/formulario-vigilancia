@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sucesso!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Definindo a fonte Times New Roman para uso global ou específico */
+        .font-times-new-roman {
+            font-family: "Times New Roman", Times, serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center; /* Centraliza o conteúdo principal */
+        }
+        /* Estilos para o cabeçalho */
+        .header-section {
+            margin-bottom: 24px; /* Espaço abaixo do cabeçalho */
+            text-align: left; /* Alinha o conteúdo do cabeçalho à esquerda */
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinha logo à esquerda e texto à direita */
+        }
+        .header-content img {
+            height: 80px; /* Altura do logo */
+            width: auto;
+            margin-right: 20px; /* Espaço entre logo e texto */
+        }
+        .header-text {
+            flex-grow: 1; /* Permite que o texto ocupe o espaço restante */
+            text-align: center; /* Centraliza o texto */
+            padding-right: 20px; /* Adiciona um padding para centralizar melhor o texto visualmente */
+        }
+        .header-text p {
+            font-size: 1.125rem; /* Equivalente a 18px, próximo de 12pt */
+            font-weight: 700; /* Negrito */
+            line-height: 1.2; /* Espaçamento entre linhas */
+        }
+        .header-separator {
+            border-top: 2px solid #ccc; /* Linha horizontal */
+            margin-top: 16px; /* Espaço acima da linha */
+        }
+        /* Estilo para o título principal da página de sucesso */
+        .success-title {
+            font-size: 1.875rem; /* Equivalente a 30px */
+            font-weight: 800;
+            color: #28a745; /* Uma cor verde para indicar sucesso */
+            margin-bottom: 20px;
+        }
+        .protocol-text {
+            font-size: 1.25rem; /* Um pouco maior para o protocolo */
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+        .download-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .download-link:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .instructions-text {
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+        }
+        .instructions-text strong {
+            color: #d35400; /* Cor para destacar avisos */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho idêntico ao de index.html e PDF -->
+        <div class="header-section">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='logo_sertaozinho.jpeg') }}" alt="Logo Sertãozinho">
+                <div class="header-text font-times-new-roman">
+                    <p>SECRETARIA MUNICIPAL DE SAÚDE DE SERTÃOZINHO-SP</p>
+                    <p>VIGILÂNCIA SANITÁRIA</p>
+                </div>
+            </div>
+            <hr class="header-separator">
+        </div>
+
+        <h2 class="success-title font-times-new-roman">Formulário Recebido com Sucesso!</h2>
+        <p class="protocol-text">Protocolo gerado: <strong class="font-times-new-roman">{{ protocolo }}</strong></p>
+        <p>
+            <a href="{{ url_for('baixar_pdf', protocolo=protocolo) }}" class="download-link">
+                Clique aqui para baixar o PDF
+            </a>
+        </p>
+
+        <!-- Novas instruções para o usuário -->
+        <div class="instructions-text">
+            <p><strong>Próximos passos:</strong></p>
+            <p>1. Baixe o formulário em PDF utilizando o link acima.</p>
+            <p>2. Assine o documento digitalmente.</p>
+            <p>3. Envie o formulário assinado para o e-mail: <a href="mailto:receituarios.vs@sertaozinho.sp.gov.br" class="text-blue-600 hover:underline">receituarios.vs@sertaozinho.sp.gov.br</a></p>
+            <p><strong>Atenção:</strong> Serão aceitos somente formulários assinados digitalmente.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Solicitações</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Definindo a fonte Times New Roman para uso global ou específico */
+        .font-times-new-roman {
+            font-family: "Times New Roman", Times, serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column; /* Permite que o conteúdo se empilhe verticalmente */
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 95%; /* Reduz a largura máxima para se ajustar melhor ao monitor */
+            width: 100%;
+            margin-bottom: 20px; /* Espaço entre o container e o final da página */
+        }
+        /* Estilos para o cabeçalho */
+        .header-section {
+            margin-bottom: 24px; /* Espaço abaixo do cabeçalho */
+            text-align: left; /* Alinha o conteúdo do cabeçalho à esquerda */
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinha logo à esquerda e texto à direita */
+        }
+        .header-content img {
+            height: 80px; /* Altura do logo */
+            width: auto;
+            margin-right: 20px; /* Espaço entre logo e texto */
+        }
+        .header-text {
+            flex-grow: 1; /* Permite que o texto ocupe o espaço restante */
+            text-align: center; /* Centraliza o texto */
+            padding-right: 20px; /* Adiciona um padding para centralizar melhor o texto visualmente */
+        }
+        .header-text p {
+            font-size: 1.125rem; /* Equivalente a 18px, próximo de 12pt */
+            font-weight: 700; /* Negrito */
+            line-height: 1.2; /* Espaçamento entre linhas */
+        }
+        .header-separator {
+            border-top: 2px solid #ccc; /* Linha horizontal */
+            margin-top: 16px; /* Espaço acima da linha */
+        }
+        /* Estilo para o título principal da página de consulta */
+        .consult-title {
+            font-size: 1.875rem; /* Equivalente a 30px */
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        /* Estilo para o botão Sair */
+        .logout-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #e74c3c; /* Vermelho para sair */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .logout-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        /* Estilos para a tabela */
+        .table-container {
+            overflow-x: auto; /* Permite scroll horizontal em telas pequenas */
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            /* Novos estilos para altura e scroll vertical */
+            max-height: calc(100vh - 300px); /* Ajusta a altura máxima com base na viewport height */
+            overflow-y: auto; /* Permite rolagem vertical */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Remove espaçamento entre bordas da célula */
+            table-layout: fixed; /* Ajuda a fixar larguras de coluna */
+            min-width: 2500px; /* Aumentado para acomodar todas as colunas e títulos */
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            white-space: nowrap; /* Impede que o texto quebre linhas */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+        }
+        th {
+            background-color: #f8f8f8;
+            color: #34495e;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            position: sticky; /* Fixa o cabeçalho */
+            top: 0; /* Fixa no topo do contêiner de rolagem */
+            z-index: 10; /* Garante que o cabeçalho fique acima do conteúdo de rolagem */
+        }
+        tbody tr:nth-child(even) {
+            background-color: #fcfcfc; /* Cor para linhas pares */
+        }
+        tbody tr:hover {
+            background-color: #f2f2f2; /* Cor ao passar o mouse */
+        }
+        td {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        /* Definindo larguras aproximadas para as colunas */
+        /* Ordem: Checkbox, ID, Status, Nome, CPF/CNPJ, Telefone, Responsável Técnico, Conselho, Nº Conselho, Endereço, Nome Terceiro, CPF Terceiro, Receita A, Receita B, Receita B2, Retinoides, Talidomida, Protocolo, Data Protocolo, Hora Protocolo */
+        th:nth-child(1), td:nth-child(1) { width: 2.5%; } /* Checkbox */
+        th:nth-child(2), td:nth-child(2) { width: 3.5%; } /* ID */
+        th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Status */
+        th:nth-child(4), td:nth-child(4) { width: 10%; } /* Nome */
+        th:nth-child(5), td:nth-child(5) { width: 7%; }  /* CPF/CNPJ */
+        th:nth-child(6), td:nth-child(6) { width: 6%; }  /* Telefone */
+        th:nth-child(7), td:nth-child(7) { width: 9%; } /* Responsável Técnico */
+        th:nth-child(8), td:nth-child(8) { width: 6%; }  /* Conselho */
+        th:nth-child(9), td:nth-child(9) { width: 7%; }  /* Nº Conselho */
+        th:nth-child(10), td:nth-child(10) { width: 12%; } /* Endereço */
+        th:nth-child(11), td:nth-child(11) { width: 10%; } /* Nome Terceiro */
+        th:nth-child(12), td:nth-child(12) { width: 7%; } /* CPF Terceiro */
+        th:nth-child(13), td:nth-child(13) { width: 8%; } /* Receita A */
+        th:nth-child(14), td:nth-child(14) { width: 8%; } /* Receita B */
+        th:nth-child(15), td:nth-child(15) { width: 8%; } /* Receita B2 */
+        th:nth-child(16), td:nth-child(16) { width: 8%; } /* Retinoides */
+        th:nth-child(17), td:nth-child(17) { width: 8%; } /* Talidomida */
+        th:nth-child(18), td:nth-child(18) { width: 9%; } /* Protocolo */
+        th:nth-child(19), td:nth-child(19) { width: 8%; } /* Data Protocolo */
+        th:nth-child(20), td:nth-child(20) { width: 7.5%; } /* Hora Protocolo */
+
+        /* Estilos para os campos de filtro */
+        .filter-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+        }
+        .filter-row th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color: #f0f0f0; /* Fundo diferente para a linha de filtro */
+        }
+        .button-group { /* Novo grupo para botões */
+            display: flex;
+            justify-content: space-between; /* Alinha botões à esquerda e direita */
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .delete-button {
+            padding: 10px 20px;
+            background-color: #dc3545; /* Vermelho para deletar */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-right: 10px; /* Espaço entre Excluir e Exportar */
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        .export-button { /* Estilo para o botão de exportar (agora com texto) */
+            padding: 10px 20px; /* Restaurado o padding original */
+            background-color: #007bff; /* Azul para exportar */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Removidos estilos de display para ícone */
+        }
+        .export-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        /* Removido .export-button svg {} */
+        .filter-buttons {
+            display: flex;
+            gap: 10px; /* Espaço entre os botões de filtro */
+        }
+        .filter-buttons button {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .filter-buttons .apply-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        .filter-buttons .apply-button:hover {
+            background-color: #218838;
+        }
+        .filter-buttons .clear-button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        .filter-buttons .clear-button:hover {
+            background-color: #5a6268;
+        }
+
+        /* Estilos para o Modal de Confirmação */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-50px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+        .modal-body p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .modal-footer button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 0 10px;
+        }
+        .modal-footer .confirm-button {
+            background-color: #dc3545; /* Vermelho para confirmar exclusão */
+            color: white;
+            border: none;
+        }
+        .modal-footer .confirm-button:hover {
+            background-color: #c82333;
+        }
+        .modal-footer .cancel-button {
+            background-color: #6c757d; /* Cinza para cancelar */
+            color: white;
+            border: none;
+        }
+        .modal-footer .cancel-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho idêntico aos outros templates -->
+        <div class="header-section">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='logo_sertaozinho.jpeg') }}" alt="Logo Sertãozinho">
+                <div class="header-text font-times-new-roman">
+                    <p>SECRETARIA MUNICIPAL DE SAÚDE DE SERTÃOZINHO-SP</p>
+                    <p>VIGILÂNCIA SANITÁRIA</p>
+                </div>
+            </div>
+            <hr class="header-separator">
+        </div>
+
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="{{ url_for('logout') }}" class="logout-button">Sair</a>
+        </div>
+
+        <h2 class="consult-title font-times-new-roman">Solicitações Recebidas</h2>
+        
+        <div class="button-group"> <!-- Grupo para organizar botões de ação -->
+            <div>
+                <button class="delete-button" onclick="showConfirmationModal()">Excluir Selecionados</button>
+                <button class="export-button" onclick="exportTableToCSV()">Exportar para Excel</button>
+            </div>
+            <div class="filter-buttons">
+                <button class="apply-button" onclick="applyFilters()">Aplicar Filtros</button>
+                <button class="clear-button" onclick="clearFilters()">Limpar Filtros</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAllCheckboxes"></th> <!-- Checkbox mestre -->
+                        <th>ID</th>
+                        <th>Status</th> <!-- Nova coluna para o Status -->
+                        <th>Nome</th>
+                        <th>CPF/CNPJ</th>
+                        <th>Telefone</th>
+                        <th>Responsável Técnico</th>
+                        <th>Conselho</th>
+                        <th>Nº Conselho</th>
+                        <th>Endereço</th>
+                        <th>Nome Terceiro</th>
+                        <th>CPF Terceiro</th>
+                        <th>Receita A</th>
+                        <th>Receita B</th>
+                        <th>Receita B2</th>
+                        <th>Retinoides</th>
+                        <th>Talidomida</th>
+                        <th>Protocolo</th>
+                        <th>Data Protocolo</th>
+                        <th>Hora Protocolo</th>
+                    </tr>
+                    <!-- Linha de filtros -->
+                    <tr class="filter-row">
+                        <th></th> <!-- Coluna vazia para o checkbox mestre -->
+                        <th><input type="text" id="filter-id" placeholder="Filtrar ID"></th>
+                        <th><input type="text" id="filter-status" placeholder="Filtrar Status"></th> <!-- Campo de filtro para Status -->
+                        <th><input type="text" id="filter-nome" placeholder="Filtrar Nome"></th>
+                        <th><input type="text" id="filter-cpf_cnpj" placeholder="Filtrar CPF/CNPJ"></th>
+                        <th><input type="text" id="filter-telefone" placeholder="Filtrar Telefone"></th>
+                        <th><input type="text" id="filter-responsavel" placeholder="Filtrar Responsável"></th>
+                        <th><input type="text" id="filter-conselho" placeholder="Filtrar Conselho"></th>
+                        <th><input type="text" id="filter-numero_conselho" placeholder="Filtrar Nº Conselho"></th>
+                        <th><input type="text" id="filter-endereco" placeholder="Filtrar Endereço"></th>
+                        <th><input type="text" id="filter-nome_terceiro" placeholder="Filtrar Nome Terceiro"></th>
+                        <th><input type="text" id="filter-cpf_terceiro" placeholder="Filtrar CPF Terceiro"></th>
+                        <th><input type="text" id="filter-receita_a" placeholder="Filtrar Receita A"></th>
+                        <th><input type="text" id="filter-receita_b" placeholder="Filtrar Receita B"></th>
+                        <th><input type="text" id="filter-receita_b2" placeholder="Filtrar Receita B2"></th>
+                        <th><input type="text" id="filter-retinoides" placeholder="Filtrar Retinoides"></th>
+                        <th><input type="text" id="filter-talidomida" placeholder="Filtrar Talidomida"></th>
+                        <th><input type="text" id="filter-protocolo" placeholder="Filtrar Protocolo"></th>
+                        <th><input type="text" id="filter-data_protocolo" placeholder="Filtrar Data (dd/mm/aaaa)"></th>
+                        <th><input type="text" id="filter-hora_protocolo" placeholder="Filtrar Hora (hh:mm:ss)"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in registros %}
+                    <tr>
+                        <td><input type="checkbox" class="row-checkbox" data-id="{{ r.id }}"></td>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.status }}</td> <!-- Exibe o Status -->
+                        <td>{{ r.nome }}</td>
+                        <td>{{ r.cpf_cnpj }}</td>
+                        <td>{{ r.telefone }}</td>
+                        <td>{{ r.responsavel }}</td>
+                        <td>{{ r.conselho }}</td>
+                        <td>{{ r.numero_conselho }}</td>
+                        <td>{{ r.endereco }}</td>
+                        <td>{{ r.nome_terceiro }}</td>
+                        <td>{{ r.cpf_terceiro }}</td>
+                        <td>{{ r.receita_a }}</td>
+                        <td>{{ r.receita_b }}</td>
+                        <td>{{ r.receita_b2 }}</td>
+                        <td>{{ r.retinoides }}</td>
+                        <td>{{ r.talidomida }}</td>
+                        <td>{{ r.protocolo }}</td>
+                        <td>{{ r.data_protocolo.strftime('%d/%m/%Y') if r.data_protocolo else '---' }}</td>
+                        <td>{{ r.hora_protocolo.strftime('%H:%M:%S') if r.hora_protocolo else '---' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação Personalizado -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmação de Exclusão</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Tem certeza que deseja excluir as solicitações selecionadas?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-button" onclick="hideConfirmationModal()">Cancelar</button>
+                <button class="confirm-button" onclick="deleteSelectedItems()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funções para o modal de confirmação
+        function showConfirmationModal() {
+            const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                alert("Nenhuma solicitação selecionada para exclusão."); // Usando alert provisório, pode ser substituído por um modal de aviso
+                return;
+            }
+            document.getElementById('confirmationModal').classList.add('active');
+        }
+
+        function hideConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+        }
+
+        // Função para deletar itens selecionados
+        async function deleteSelectedItems() {
+            hideConfirmationModal(); // Esconde o modal imediatamente
+
+            const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+            const idsToDelete = Array.from(selectedCheckboxes).map(cb => cb.dataset.id);
+
+            if (idsToDelete.length === 0) {
+                // Isso não deve acontecer se showConfirmationModal() for chamado corretamente
+                console.warn("Nenhum item selecionado para exclusão após a confirmação.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/deletar_solicitacoes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ids: idsToDelete }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message || "Solicitações deletadas com sucesso!");
+                    // Recarregar a página para atualizar a tabela
+                    location.reload(); 
+                } else {
+                    alert(result.error || "Erro ao deletar solicitações.");
+                }
+            } catch (error) {
+                console.error('Erro ao enviar requisição de exclusão:', error);
+                alert("Ocorreu um erro ao tentar deletar as solicitações. Verifique a conexão.");
+            }
+        }
+
+        // Função para exportar a tabela para CSV
+        function exportTableToCSV() {
+            const table = document.querySelector('table');
+            let csv = [];
+
+            // Adicionar cabeçalhos (excluindo a coluna do checkbox)
+            const headers = Array.from(table.querySelectorAll('thead tr:first-child th'))
+                                .slice(1) // Ignora o primeiro th (checkbox)
+                                .map(th => `"${th.innerText.replace(/"/g, '""')}"`) // Adiciona aspas duplas e escapa aspas internas
+                                .join(',');
+            csv.push(headers);
+
+            // Adicionar linhas de dados visíveis (ignorando o checkbox e linhas filtradas)
+            table.querySelectorAll('tbody tr').forEach(row => {
+                // Verifica se a linha está visível (não escondida pelo filtro)
+                if (row.style.display !== 'none') {
+                    const rowData = Array.from(row.querySelectorAll('td'))
+                                        .slice(1) // Ignora o primeiro td (checkbox)
+                                        .map(td => `"${td.innerText.replace(/"/g, '""')}"`) // Adiciona aspas duplas e escapa aspas internas
+                                        .join(',');
+                    csv.push(rowData);
+                }
+            });
+
+            // Cria um link de download e simula o clique
+            const csvString = csv.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'solicitacoes_receituario.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Libera o objeto URL
+        }
+
+
+        // Lógica para selecionar todos os checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckboxes');
+            const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+            selectAllCheckbox.addEventListener('change', function() {
+                rowCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else {
+                        const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
+                        selectAllCheckbox.checked = allChecked;
+                    }
+                });
+            });
+
+            // Lógica de filtro (existente, mas atualizada para novos índices de coluna)
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tbody tr');
+            const filterInputs = table.querySelectorAll('.filter-row input');
+
+            function applyFilters() {
+                rows.forEach(row => {
+                    let rowMatches = true;
+                    // As células de dados começam após o checkbox (índice 0 do td é o checkbox)
+                    // e a ordem dos inputs de filtro (filter-id, filter-status, etc.)
+                    // corresponde diretamente às células de dados subsequentes.
+                    const cells = Array.from(row.querySelectorAll('td')); 
+
+                    filterInputs.forEach((input, inputIndex) => {
+                        const filterText = input.value.toLowerCase();
+                        // O inputIndex + 1 compensa a coluna do checkbox no TD.
+                        // filter-id (inputIndex 0) deve comparar com cells[1] (ID)
+                        // filter-status (inputIndex 1) deve comparar com cells[2] (Status)
+                        const cellText = cells[inputIndex + 1].textContent.toLowerCase(); 
+
+                        if (filterText && !cellText.includes(filterText)) {
+                            rowMatches = false;
+                        }
+                    });
+
+                    if (rowMatches) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function clearFilters() {
+                filterInputs.forEach(input => {
+                    input.value = '';
+                });
+                applyFilters();
+            }
+
+            // Atribui as funções globalmente para que possam ser chamadas pelos botões
+            window.applyFilters = applyFilters;
+            window.clearFilters = clearFilters;
+
+
+            filterInputs.forEach(input => {
+                input.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        applyFilters();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
