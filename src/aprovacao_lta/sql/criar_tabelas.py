@@ -11,7 +11,8 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Caminho seguro e absoluto para o arquivo SQL
-import_path = os.path.join(os.path.dirname(__file__), 'sql', 'checklist_projeto.sql')
+import_path = os.path.join(os.path.dirname(__file__), 'checklist_projeto.sql')
+
 
 with open(import_path, "r", encoding="utf-8") as f:
     sql_script = f.read()
