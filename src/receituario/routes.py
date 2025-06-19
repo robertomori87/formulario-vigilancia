@@ -10,6 +10,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import os
 import random
+import hashlib
 
 receituario_bp = Blueprint("receituario_bp", __name__)
 
@@ -38,7 +39,24 @@ def login():
     if request.method == "POST":
         usuario = request.form.get("usuario")
         senha = request.form.get("senha")
-        if usuario == "admin" and senha == "12345": # Lembre-se de melhorar esta autenticação em produção!
+        
+        # Obter credenciais dos environment variables
+        admin_user = os.environ.get("ADMIN_USERNAME")
+        admin_password_hash = os.environ.get("ADMIN_PASSWORD_HASH")
+        
+        # Verificar se as variáveis de ambiente estão configuradas
+        if not admin_user or not admin_password_hash:
+            print("⚠️ AVISO: Variáveis de ambiente ADMIN_USERNAME e/ou ADMIN_PASSWORD_HASH não configuradas. "
+                 "Configure-as no arquivo .env para segurança adequada.")
+            # Fallback para desenvolvimento apenas (não usar em produção)
+            admin_user = "admin"
+            # Hash da senha "12345" usando SHA-256
+            admin_password_hash = "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
+        
+        # Verificar as credenciais usando hash seguro
+        senha_hash = hashlib.sha256(senha.encode()).hexdigest()
+        
+        if usuario == admin_user and senha_hash == admin_password_hash:
             session["logado"] = True
             return redirect(url_for("receituario_bp.consultar"))
         else:
