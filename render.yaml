@@ -4,10 +4,9 @@ services:
     runtime: python
     buildCommand: |
       pip install -r requirements.txt
-      PYTHON=$(python3 -c "import sys; print(sys.executable)")
-      $PYTHON src/aprovacao_lta/sql/criar_tabelas.py
-      $PYTHON -m src.aprovacao_lta.sql.importar_perguntas_excel
-    startCommand: gunicorn src.app:app
+      /opt/render/project/src/.venv/bin/python3 src/aprovacao_lta/sql/criar_tabelas.py
+      /opt/render/project/src/.venv/bin/python3 -m src.aprovacao_lta.sql.importar_perguntas_excel
+    startCommand: /opt/render/project/src/.venv/bin/gunicorn src.app:app
     envVars:
       - key: DATABASE_URL
         fromDatabase:
