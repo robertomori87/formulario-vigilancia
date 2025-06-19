@@ -31,7 +31,7 @@ def validar_cnpj(cnpj: str) -> bool:
 
 
 # Leitura da planilha
-df = pd.read_excel("C:/Users/roberto.mori/Desktop/SISTEMA VIGILANCIA/SISTEMA_VIGILANCIA_PUBLICACAO/src/aprovacao_lta/dados/checklist_perguntas.xlsx")
+df = pd.read_excel("src/aprovacao_lta/dados/checklist_perguntas.xlsx")
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
 
