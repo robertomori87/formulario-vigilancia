@@ -1,29 +1,32 @@
-# Ambiente virtual
-venv/
-.venv/
-
-# Arquivos e pastas temporárias do Python
+# Arquivos Python compilados
 __pycache__/
 *.py[cod]
 *.pyo
-*.pyd
 
-# Arquivos de ambiente
+# Ambientes virtuais (por exemplo, 'venv/')
+venv/
+env/
+
+# Configurações locais
+*.env
 .env
 
-# Arquivos de log, dump ou temporários
-*.log
-*.bak
-*.tmp
-*.swp
+# Arquivos temporários de sistema operacional
+.DS_Store
+Thumbs.db
 
-# Arquivos de cache do editor (VS Code, PyCharm etc.)
+# Arquivos do VSCode ou PyCharm
 .vscode/
 .idea/
 
-# Excel (se não quiser subir planilhas de controle)
-*.xlsx
-!src/**/dados/*.xlsx  # exceção: manter os essenciais em src/aprovacao_lta/dados/
+# Logs
+*.log
 
-# PDF temporários gerados
-pdfs/
+# Excel temporário (evita arquivos criados pelo Excel)
+~$*
+
+# Arquivos de sistema que você mostrou
+start.sh
+DockerFile
+fly.toml
+Procfile
