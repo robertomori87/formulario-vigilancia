@@ -1,0 +1,7 @@
+app = "vigilancia-sertaozinho"
+
+[build]
+builder = "Dockerfile"
+
+[env]
+PORT = "8080"
