@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: seu-app-nome
+    name: aprovacao-lta
     runtime: python
     buildCommand: |
       pip install -r requirements.txt
-      python src/aprovacao_lta/sql/criar_tabelas.py
-      python -m src.aprovacao_lta.sql.importar_perguntas_excel
+      python3 src/aprovacao_lta/sql/criar_tabelas.py
+      python3 -m src.aprovacao_lta.sql.importar_perguntas_excel
     startCommand: gunicorn src.app:app
     envVars:
       - key: DATABASE_URL
