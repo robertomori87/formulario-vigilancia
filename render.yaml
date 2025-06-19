@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: seu-app-nome
+    runtime: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python src/aprovacao_lta/sql/criar_tabelas.py
+      python -m src.aprovacao_lta.sql.importar_perguntas_excel
+    startCommand: gunicorn src.app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aprovacao_projeto_db
+          property: connectionString
+      - key: SECRET_KEY
+        sync: false
