@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from supabase import create_client
 import os
+import re
 from gerar_pdf import gerar_pdf
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
@@ -32,6 +33,16 @@ def validar_cnpj(cnpj: str) -> bool:
     d2 = d2 if d2 < 10 else 0
     return cnpj[-2:] == f"{d1}{d2}"
 
+def formatar_cpf(cpf):
+    cpf = ''.join(filter(str.isdigit, cpf))
+    return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}" if len(cpf) == 11 else cpf
+
+def formatar_cnpj(cnpj):
+    cnpj = ''.join(filter(str.isdigit, cnpj))
+    return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}" if len(cnpj) == 14 else cnpj
+
+def validar_cep(cep: str) -> bool:
+    return bool(re.fullmatch(r"\d{5}-?\d{3}", cep))
 
 # Leitura da planilha
 # Carrega o JSON (estando na mesma pasta do app)
@@ -51,7 +62,11 @@ df = carregar_perguntas()
 # df = pd.DataFrame(dados_json)
 
 
-
+# Antes da bifurcação
+razao_social = ""
+cnpj = ""
+nome_pf = ""
+cpf_pf = ""
 
 st.markdown("Preencha todos os dados do formulário abaixo.")
 
@@ -66,13 +81,13 @@ if tipo_pessoa == "Pessoa Jurídica":
     with col1:
         razao_social = st.text_input("Razão Social").upper()
     with col2:
-        cnpj = st.text_input("CNPJ")
+        cnpj = st.text_input("CNPJ (somente números)", help="Ex: 12345678000195 ou 12.345.678/0001-95")
 else:
     col1, col2 = st.columns(2)
     with col1:
         nome_pf = st.text_input("Nome completo").upper()
     with col2:
-        cpf_pf = st.text_input("CPF")
+        cpf_pf = st.text_input("CPF (somente números)", help="Ex: 12345678901 ou 123.456.789-01")
 
 st.subheader("Endereço do Estabelecimento")
 
@@ -86,7 +101,8 @@ tipos_logradouro = [
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    logradouro_tipo = st.selectbox("Tipo de logradouro:", tipos_logradouro).upper()
+    logradouro_tipo = st.selectbox("Tipo de logradouro:", tipos_logradouro)
+    logradouro_tipo = logradouro_tipo.upper()
 with col2:
     logradouro = st.text_input("Logradouro").upper()
 with col3:
@@ -96,7 +112,7 @@ col1, col2 = st.columns(2)
 with col1:
     bairro = st.text_input("Bairro").upper()
 with col2:
-    cep = st.text_input("CEP")
+    cep = st.text_input("CEP (formato XXXXX-XXX)", help="Ex: 14020-000")
 
 cidade = "SERTÃOZINHO-SP"
 st.text_input("Cidade", value=cidade, disabled=True)
@@ -106,14 +122,14 @@ col1, col2 = st.columns(2)
 with col1:
     nome_rt = st.text_input("Nome do RT").upper()
 with col2:
-    cpf_rt = st.text_input("CPF do RT")
+    cpf_rt = st.text_input("CPF do RT (somente números)", help="Ex: 12345678901")
 
 st.subheader("Responsável Legal")
 col1, col2 = st.columns(2)
 with col1:
     nome_rl = st.text_input("Nome do Responsável Legal").upper()
 with col2:
-    cpf_rl = st.text_input("CPF do Responsável Legal")
+    cpf_rl = st.text_input("CPF do Responsável Legal (somente números)", help="Ex: 12345678901")
 
 st.subheader("Questionário")
 
@@ -204,7 +220,7 @@ if st.button("📤 Enviar checklist"):
     if not logradouro or not numero or not bairro or not cep:
         erros.append("❌ Endereço incompleto.")
 
-    razao_social = cnpj = nome_pf = cpf_pf = ""  # evita NameError
+    
 
     # Validação das respostas do checklist
     for r in respostas:
