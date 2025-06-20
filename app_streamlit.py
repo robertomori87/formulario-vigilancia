@@ -44,6 +44,10 @@ def formatar_cnpj(cnpj):
 def validar_cep(cep: str) -> bool:
     return bool(re.fullmatch(r"\d{5}-?\d{3}", cep))
 
+def formatar_cep(cep):
+    cep = ''.join(filter(str.isdigit, cep))
+    return f"{cep[:5]}-{cep[5:]}" if len(cep) == 8 else cep
+
 # Leitura da planilha
 # Carrega o JSON (estando na mesma pasta do app)
 @st.cache_data
@@ -68,6 +72,10 @@ cnpj = ""
 nome_pf = ""
 cpf_pf = ""
 
+mensagem_cpf = "CPF (somente números)", help="Ex: 12345678901 ou 123.456.789-01"
+mensagem_cnpj = "CNPJ (somente números)", help="Ex: 12345678000195 ou 12.345.678/0001-95"
+mensagem_cep = "CEP (formato XXXXX-XXX)", help="Ex: 14020-000"
+
 st.markdown("Preencha todos os dados do formulário abaixo.")
 
 st.header("Identificação do Estabelecimento")
@@ -81,13 +89,13 @@ if tipo_pessoa == "Pessoa Jurídica":
     with col1:
         razao_social = st.text_input("Razão Social").upper()
     with col2:
-        cnpj = st.text_input("CNPJ (somente números)", help="Ex: 12345678000195 ou 12.345.678/0001-95")
+        cnpj = st.text_input(mensagem_cnpj)
 else:
     col1, col2 = st.columns(2)
     with col1:
         nome_pf = st.text_input("Nome completo").upper()
     with col2:
-        cpf_pf = st.text_input("CPF (somente números)", help="Ex: 12345678901 ou 123.456.789-01")
+        cpf_pf = st.text_input(mensagem_cpf)
 
 st.subheader("Endereço do Estabelecimento")
 
@@ -112,7 +120,7 @@ col1, col2 = st.columns(2)
 with col1:
     bairro = st.text_input("Bairro").upper()
 with col2:
-    cep = st.text_input("CEP (formato XXXXX-XXX)", help="Ex: 14020-000")
+    cep = st.text_input(mensagem_cep)
 
 cidade = "SERTÃOZINHO-SP"
 st.text_input("Cidade", value=cidade, disabled=True)
@@ -122,14 +130,14 @@ col1, col2 = st.columns(2)
 with col1:
     nome_rt = st.text_input("Nome do RT").upper()
 with col2:
-    cpf_rt = st.text_input("CPF do RT (somente números)", help="Ex: 12345678901")
+    cpf_rt = st.text_input(mensagem_cpf)
 
 st.subheader("Responsável Legal")
 col1, col2 = st.columns(2)
 with col1:
     nome_rl = st.text_input("Nome do Responsável Legal").upper()
 with col2:
-    cpf_rl = st.text_input("CPF do Responsável Legal (somente números)", help="Ex: 12345678901")
+    cpf_rl = st.text_input(mensagem_cpf)
 
 st.subheader("Questionário")
 
@@ -238,18 +246,18 @@ if st.button("📤 Enviar checklist"):
         dados_envio = {
             "tipo_pessoa": tipo_pessoa,
             "razao_social": razao_social if tipo_pessoa == "Pessoa Jurídica" else None,
-            "cnpj": cnpj if tipo_pessoa == "Pessoa Jurídica" else None,
+            "cnpj": formatar_cnpj(cnpj) if tipo_pessoa == "Pessoa Jurídica" else None,
             "nome_pf": nome_pf if tipo_pessoa == "Pessoa Física" else None,
-            "cpf_pf": cpf_pf if tipo_pessoa == "Pessoa Física" else None,
+            "cpf_pf": formatar_cpf(cpf_pf) if tipo_pessoa == "Pessoa Física" else None,
             "logradouro": f"{logradouro_tipo or ''} {logradouro}".strip(),
             "numero": numero,
             "bairro": bairro,
-            "cep": cep,
+            "cep": formatar_cep(cep),
             "cidade": cidade,
             "nome_rt": nome_rt,
-            "cpf_rt": cpf_rt,
+            "cpf_rt": formatar_cpf(cpf_rt),
             "nome_rl": nome_rl,
-            "cpf_rl": cpf_rl,
+            "cpf_rl": formatar_cpf(cpf_rl),
             "respostas": json.dumps(respostas)
         }
 
