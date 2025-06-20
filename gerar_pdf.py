@@ -13,20 +13,20 @@ FONT_NAME = "Arial" # Usando Arial para compatibilidade total e evitar erros de 
 class PDF(FPDF):
     def __init__(self):
         super().__init__()
-        self.add_page()
-        self.set_auto_page_break(auto=True, margin=15)
-        # Usar a variável da fonte
+        self.alias_nb_pages()  # <-- aqui
+        self.set_auto_page_break(auto=True, margin=25)
         self.set_font(FONT_NAME, size=10)
+        self.add_page()
 
     def header(self):
         adicionar_cabecalho(self)
 
     def footer(self):
-        adicionar_rodape(self, self.page_no(), self.alias_nb_pages())
+        adicionar_rodape(self, self.page_no())
 
 def gerar_pdf(dados_envio):
     pdf = PDF()
-    pdf.alias_nb_pages()
+    
     pdf.set_margins(20, 20, 20)
 
     # Função para limpar caracteres não suportados por fontes built-in
@@ -185,6 +185,6 @@ def gerar_pdf(dados_envio):
     pdf.cell(0, 5, clean_text(dados_envio.get("nome_rt", "Nome do Responsável Técnico")), ln=True, align='C')
 
     buffer = BytesIO()
-    pdf.output(buffer)
+    pdf.output(buffer, dest='S').encode('latin-1')  # se salvar como bytes diretamente
     buffer.seek(0)
     return buffer
