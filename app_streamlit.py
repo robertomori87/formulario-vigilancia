@@ -165,6 +165,13 @@ st.markdown(
 # Conecte ao Supabase
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
+# --- Adicione estas linhas TEMPORARIAMENTE para depuração ---
+st.write(f"Supabase URL lida: {'(presente)' if SUPABASE_URL else '(ausente)'}")
+st.write(f"Supabase Key lida: {'(presente)' if SUPABASE_KEY else '(ausente)'}")
+# --- Fim das linhas temporárias ---
+
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 if st.button("📤 Enviar checklist"):
