@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
-from supabase.client import create_client
+# from supabase.client import create_client
 import os
 
 
@@ -165,16 +165,16 @@ st.markdown(
 
 # Conecte ao Supabase
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# SUPABASE_URL = os.environ.get("SUPABASE_URL")
+# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-# --- Adicione estas linhas TEMPORARIAMENTE para depuração ---
-st.write(f"Supabase URL lida: {'(presente)' if SUPABASE_URL else '(ausente)'}")
-st.write(f"Supabase Key lida: {'(presente)' if SUPABASE_KEY else '(ausente)'}")
-# --- Fim das linhas temporárias ---
+# # --- Adicione estas linhas TEMPORARIAMENTE para depuração ---
+# st.write(f"Supabase URL lida: {'(presente)' if SUPABASE_URL else '(ausente)'}")
+# st.write(f"Supabase Key lida: {'(presente)' if SUPABASE_KEY else '(ausente)'}")
+# # --- Fim das linhas temporárias ---
 
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 if st.button("📤 Enviar checklist"):
     erros = []
@@ -220,14 +220,17 @@ if st.button("📤 Enviar checklist"):
             "respostas": json.dumps(respostas)  # envia como string JSON
         }
 
-        try:
-            supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
-            st.success("✅ Checklist enviado e salvo com sucesso no Supabase!")
-        except Exception as e:
-            st.error(f"❌ Erro ao salvar no Supabase: {e}")
+        # try:
+        #     supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
+        #     st.success("✅ Checklist enviado e salvo com sucesso no Supabase!")
+        # except Exception as e:
+        #     st.error(f"❌ Erro ao salvar no Supabase: {e}")
+
+        st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
+        st.json(dados_envio)  # Mostra os dados simulados na tela para teste
 
 # if st.button("📤 Enviar checklist"):
-#     st.success("Checklist enviado com sucesso (ainda não salva, só simulado).")
-#     st.json(respostas)
+#     st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
+#     st.json(dados_envio)  # Mostra os dados simulados na tela para teste
 
 
