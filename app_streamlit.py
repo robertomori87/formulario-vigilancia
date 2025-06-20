@@ -4,6 +4,8 @@ import json
 # from supabase.client import create_client
 import os
 
+st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
+st.title("Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS")
 
 def validar_cpf(cpf: str) -> bool:
     cpf = ''.join(filter(str.isdigit, cpf))
@@ -43,9 +45,9 @@ st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", l
 #     dados_json = json.load(f)
 # df = pd.DataFrame(dados_json)
 
-st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
 
-st.title("Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS")
+
+
 st.markdown("Preencha o formulário abaixo com base nos itens aplicáveis ao seu projeto.")
 
 st.header("Identificação do Estabelecimento")
