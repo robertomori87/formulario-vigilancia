@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
-# from supabase.client import create_client
+from supabase import create_client
 import os
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
@@ -34,9 +34,13 @@ def validar_cnpj(cnpj: str) -> bool:
 
 # Leitura da planilha
 # Carrega o JSON (estando na mesma pasta do app)
-json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
-with open(json_path, encoding="utf-8") as f:
-    df = pd.DataFrame(json.load(f))
+@st.cache_data
+def carregar_perguntas():
+    json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
+    with open(json_path, encoding="utf-8") as f:
+        return pd.DataFrame(json.load(f))
+
+df = carregar_perguntas()
 
 # st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", len(df))
 
@@ -166,17 +170,18 @@ st.markdown(
 )
 
 # Conecte ao Supabase
+@st.cache_resource
+def conectar_supabase():
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
 
-# SUPABASE_URL = os.environ.get("SUPABASE_URL")
-# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+    if not url or not key:
+        st.error("❌ As credenciais do Supabase (URL ou KEY) não estão configuradas corretamente.")
+        st.stop()
 
-# # --- Adicione estas linhas TEMPORARIAMENTE para depuração ---
-# st.write(f"Supabase URL lida: {'(presente)' if SUPABASE_URL else '(ausente)'}")
-# st.write(f"Supabase Key lida: {'(presente)' if SUPABASE_KEY else '(ausente)'}")
-# # --- Fim das linhas temporárias ---
+    return create_client(url, key)
 
-
-# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = conectar_supabase()
 
 if st.button("📤 Enviar checklist"):
     erros = []
@@ -190,6 +195,13 @@ if st.button("📤 Enviar checklist"):
         erros.append("❌ CPF do responsável técnico inválido.")
     if not validar_cpf(cpf_rl):
         erros.append("❌ CPF do responsável legal inválido.")
+
+    if tipo_pessoa == "Pessoa Jurídica" and not razao_social:
+        erros.append("❌ Razão social não preenchida.")
+    if tipo_pessoa == "Pessoa Física" and not nome_pf:
+        erros.append("❌ Nome da pessoa física não preenchido.")
+    if not logradouro or not numero or not bairro or not cep:
+        erros.append("❌ Endereço incompleto.")
 
     # Validação das respostas do checklist
     for r in respostas:
@@ -222,14 +234,15 @@ if st.button("📤 Enviar checklist"):
             "respostas": json.dumps(respostas)  # envia como string JSON
         }
 
-        # try:
-        #     supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
-        #     st.success("✅ Checklist enviado e salvo com sucesso no Supabase!")
-        # except Exception as e:
-        #     st.error(f"❌ Erro ao salvar no Supabase: {e}")
+        try:
+            supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
+            st.success("✅ Checklist enviado com sucesso!")
+        except Exception as e:
+            st.error("❌ Houve um erro ao salvar os dados. Tente novamente mais tarde.")
+            st.caption(f"Erro técnico (para depuração): {e}")
 
-        st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
-        st.json(dados_envio)  # Mostra os dados simulados na tela para teste
+        # st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
+        # st.json(dados_envio)  # Mostra os dados simulados na tela para teste
 
 # if st.button("📤 Enviar checklist"):
 #     st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
