@@ -24,6 +24,62 @@ class PDF(FPDF):
     def footer(self):
         adicionar_rodape(self, self.page_no())
 
+def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
+    from datetime import datetime
+
+    # Adiciona nova página
+    pdf.add_page()
+    pdf.set_y(50)
+
+    # Data formatada (ex: Sertãozinho - SP, 20 de junho de 2025)
+    meses_pt = [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    ]
+    hoje = datetime.now()
+    data_formatada = f"Sertãozinho - SP, {hoje.day} de {meses_pt[hoje.month - 1]} de {hoje.year}"
+
+    pdf.set_font("Arial", size=11)
+    pdf.cell(0, 10, data_formatada, ln=True, align='C')
+    pdf.ln(20)
+
+    # Assinatura do Responsável Legal
+    pdf.set_font("Arial", style="B", size=12)
+    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
+    pdf.cell(0, 10, "Assinatura do Responsável Legal", ln=True, align='C')
+    pdf.set_font("Arial", size=11)
+    pdf.cell(0, 5, nome_rl or "Nome do Responsável Legal", ln=True, align='C')
+    pdf.ln(20)
+
+    # Assinatura do Responsável Técnico
+    pdf.set_font("Arial", style="B", size=12)
+    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
+    pdf.cell(0, 10, "Assinatura do Responsável Técnico", ln=True, align='C')
+    pdf.set_font("Arial", size=11)
+    pdf.cell(0, 5, nome_rt or "Nome do Responsável Técnico", ln=True, align='C')
+    pdf.ln(20)
+
+    # Espaço reservado para a Prefeitura carimbar (10cm ≈ 283 pontos)
+    pdf.ln(10)
+
+    pdf.set_line_width(0.4)
+    pdf.set_draw_color(180, 180, 180)
+    pdf.set_fill_color(250, 250, 250)
+
+    y_inicio = pdf.get_y()
+    pdf.rect(20, y_inicio, 170, 350)  
+
+    pdf.set_y(y_inicio + 3)
+    pdf.set_font("Arial", "I", 10)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 6, "Espaço reservado à Prefeitura para carimbo oficial, assinatura e validação documental.", ln=True, align='C')
+    pdf.set_y(y_inicio + 95)
+    pdf.set_font("Arial", "", 8)
+    pdf.cell(0, 6, "(Não escrever ou colar nada nesta área)", ln=True, align='C')
+
+    # Retorna ao preto
+    pdf.set_text_color(0, 0, 0)
+
 def gerar_pdf(dados_envio):
     pdf = PDF()
     
@@ -155,34 +211,10 @@ def gerar_pdf(dados_envio):
 
     pdf.ln(15)
 
-    # --- Signatures and Date ---
-    pdf.set_font(FONT_NAME, size=11)
-    pdf.set_text_color(0, 0, 0)
-
-    meses_pt = [
-        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-    ]
-    hoje = datetime.now()
-    data_formatada = clean_text(f"Sertãozinho - SP, {hoje.day} de {meses_pt[hoje.month - 1]} de {hoje.year}")
-    pdf.cell(0, 10, data_formatada, ln=True, align='C')
-
-    pdf.ln(20)
-
-    # Signature lines
-    pdf.set_font(FONT_NAME, style="B", size=12)
-    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
-    pdf.cell(0, 10, clean_text("Assinatura do Responsável Legal"), ln=True, align='C')
-    pdf.set_font(FONT_NAME, size=11)
-    pdf.cell(0, 5, clean_text(dados_envio.get("nome_rl", "Nome do Responsável Legal")), ln=True, align='C')
-
-    pdf.ln(15)
-
-    pdf.set_font(FONT_NAME, style="B", size=12)
-    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
-    pdf.cell(0, 10, clean_text("Assinatura do Responsável Técnico"), ln=True, align='C')
-    pdf.set_font(FONT_NAME, size=11)
-    pdf.cell(0, 5, clean_text(dados_envio.get("nome_rt", "Nome do Responsável Técnico")), ln=True, align='C')
+    # 🔚 Adiciona a última página com assinaturas e espaço reservado
+    nome_rl = clean_text(dados_envio.get("nome_rl", "Responsável Legal"))
+    nome_rt = clean_text(dados_envio.get("nome_rt", "Responsável Técnico"))
+    gerar_ultima_pagina(pdf, nome_rl, nome_rt)
 
     buffer = BytesIO()
     pdf.output(buffer)  # 'F' = grava no file-like object
