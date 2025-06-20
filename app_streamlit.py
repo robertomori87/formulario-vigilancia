@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
-from supabase.client import create_client
+from supabase import create_client
 import os
 
 
