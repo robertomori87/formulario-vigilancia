@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: visa-sertaozinho
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "streamlit run app.py --server.port $PORT"
+    envVars:
+      - key: SUPABASE_URL
+        value: <sua-url>
+      - key: SUPABASE_KEY
+        value: <sua-key>

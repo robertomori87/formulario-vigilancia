@@ -164,8 +164,9 @@ st.markdown(
 )
 
 # Conecte ao Supabase
-SUPABASE_URL = st.secrets["SUPABASE_URL"]
-SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 # --- Adicione estas linhas TEMPORARIAMENTE para depuração ---
 st.write(f"Supabase URL lida: {'(presente)' if SUPABASE_URL else '(ausente)'}")
