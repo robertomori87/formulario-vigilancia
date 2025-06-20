@@ -31,7 +31,13 @@ def validar_cnpj(cnpj: str) -> bool:
 
 
 # Leitura da planilha
-df = pd.read_excel(os.path.join(os.path.dirname(__file__), "src", "aprovacao_lta", "dados", "checklist_perguntas.xlsx"))
+json_path = os.path.join(os.path.dirname(__file__), "src", "aprovacao_lta", "dados", "checklist_perguntas.json")
+
+
+# Carrega os dados do JSON em um DataFrame
+with open(json_path, encoding="utf-8") as f:
+    dados_json = json.load(f)
+df = pd.DataFrame(dados_json)
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
 
