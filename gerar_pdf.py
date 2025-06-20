@@ -48,6 +48,7 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
 
 
     # Assinatura do Responsável Legal
+    pdf.ln(30)  # Pequeno espaço antes da área de carimbo
     pdf.cell(0, 5, "___________________________________", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=11)
     pdf.cell(0, 5, nome_rl or "Nome do Responsável Legal", ln=True, align='C')
@@ -55,16 +56,17 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
     pdf.cell(0, 5, "Assinatura do Responsável Legal", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=12)
     
-    pdf.ln(30)  # <<< AQUI: espaço maior (antes era 20)
+    
 
     # Assinatura do Responsável Técnico
+    pdf.ln(30)  # <<< AQUI: espaço maior (antes era 20)
     pdf.cell(0, 5, "___________________________________", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=11)
     pdf.cell(0, 5, nome_rt or "Nome do Responsável Técnico", ln=True, align='C')
     pdf.set_font("Arial", size=11)
     pdf.cell(0, 5, "Assinatura do Responsável Técnico", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=12)    
-    pdf.ln(25)  # Pequeno espaço antes da área de carimbo
+    
 
     # Espaço reservado para carimbo
     pdf.set_line_width(0.4)
@@ -102,9 +104,9 @@ def gerar_pdf(dados_envio):
         return cleaned_text
 
     # --- Document Title ---
-    pdf.set_font(FONT_NAME, style="B", size=20)
+    pdf.set_font(FONT_NAME, style="B", size=18)
     pdf.set_text_color(0, 50, 100)
-    pdf.cell(0, 15, txt=clean_text("Relatório de Checklist LTA Saneantes"), ln=True, align='C')
+    pdf.cell(0, 15, txt=clean_text("LTA - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS"), ln=True, align='C')
     pdf.ln(10)
 
     # --- Section: Dados Cadastrais ---
