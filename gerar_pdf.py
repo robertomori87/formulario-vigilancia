@@ -67,7 +67,7 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
     pdf.set_fill_color(250, 250, 250)
 
     y_inicio = pdf.get_y()
-    pdf.rect(20, y_inicio, 170, 350)  
+    pdf.rect(20, y_inicio, 170, 380)  
 
     pdf.set_y(y_inicio + 3)
     pdf.set_font("Arial", "I", 10)

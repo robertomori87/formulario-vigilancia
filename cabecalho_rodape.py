@@ -9,6 +9,7 @@ def adicionar_cabecalho(pdf: FPDF):
     largura_total = 190
     largura_coluna = largura_total / 3
 
+    pdf.set_text_color(0, 0, 0)
     pdf.set_y(5)
     pdf.set_font("Arial", "B", 11)
 
@@ -38,17 +39,15 @@ def adicionar_cabecalho(pdf: FPDF):
 
 
 def adicionar_rodape(pdf: FPDF, pagina_atual: int):
-    linha_y = 282  # linha mais para cima
+    
     pdf.set_line_width(0.5)
-    pdf.line(10, linha_y, 200, linha_y)
+    pdf.line(10, 272, 200, 272)  # Linha um pouco mais para cima (antes: 277)
 
-    pdf.set_y(linha_y + 2)  # onde começam os textos abaixo da linha
+    pdf.set_y(-18)  # Também sobe a posição do texto
+    pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", "I", 8)
 
-    # Número da página abaixo da linha
-    pdf.cell(0, 5, f"Página {pagina_atual} / {{nb}}", ln=True, align="C")
-
     data_hoje = datetime.now().strftime("%d/%m/%Y")
-    pdf.cell(0, 5, f"Documento gerado eletronicamente em {data_hoje}", ln=True, align="C")
-    pdf.cell(0, 5, "Preenchido pelo requerente", ln=True, align="C")
-    pdf.cell(0, 5, "Vigilância Sanitária de Sertãozinho-SP.", ln=True, align="C")
+    rodape_texto = f"Página {pagina_atual} / {{nb}} - Documento preenchido pelo requerente e gerado eletronicamente em {data_hoje}"
+
+    pdf.multi_cell(0, 5, rodape_texto, align="C")
