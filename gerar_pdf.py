@@ -31,7 +31,7 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
     pdf.add_page()
     pdf.set_y(50)
 
-    # Data formatada (ex: Sertãozinho - SP, 20 de junho de 2025)
+    # Data formatada
     meses_pt = [
         "janeiro", "fevereiro", "março", "abril", "maio", "junho",
         "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
@@ -44,41 +44,43 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
     pdf.ln(20)
 
     # Assinatura do Responsável Legal
+    pdf.set_font("Arial", style="B", size=11)
+    pdf.cell(0, 5, nome_rl or "Nome do Responsável Legal", ln=True, align='C')
+    pdf.set_font("Arial", size=11)
+    pdf.cell(0, 5, "Assinatura do Responsável Legal", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=12)
     pdf.cell(0, 5, "___________________________________", ln=True, align='C')
-    pdf.cell(0, 10, "Assinatura do Responsável Legal", ln=True, align='C')
-    pdf.set_font("Arial", size=11)
-    pdf.cell(0, 5, nome_rl or "Nome do Responsável Legal", ln=True, align='C')
-    pdf.ln(20)
+    pdf.ln(30)  # <<< AQUI: espaço maior (antes era 20)
 
     # Assinatura do Responsável Técnico
+    pdf.set_font("Arial", style="B", size=11)
+    pdf.cell(0, 5, nome_rt or "Nome do Responsável Técnico", ln=True, align='C')
+    pdf.set_font("Arial", size=11)
+    pdf.cell(0, 5, "Assinatura do Responsável Técnico", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=12)
     pdf.cell(0, 5, "___________________________________", ln=True, align='C')
-    pdf.cell(0, 10, "Assinatura do Responsável Técnico", ln=True, align='C')
-    pdf.set_font("Arial", size=11)
-    pdf.cell(0, 5, nome_rt or "Nome do Responsável Técnico", ln=True, align='C')
-    pdf.ln(20)
+    pdf.ln(25)  # Pequeno espaço antes da área de carimbo
 
-    # Espaço reservado para a Prefeitura carimbar (10cm ≈ 283 pontos)
-    pdf.ln(10)
-
+    # Espaço reservado para carimbo
     pdf.set_line_width(0.4)
     pdf.set_draw_color(180, 180, 180)
     pdf.set_fill_color(250, 250, 250)
 
     y_inicio = pdf.get_y()
-    pdf.rect(20, y_inicio, 170, 380)  
+    pdf.rect(20, y_inicio, 170, 380)  # Altura ≈ 10cm
 
     pdf.set_y(y_inicio + 3)
     pdf.set_font("Arial", "I", 10)
     pdf.set_text_color(100, 100, 100)
     pdf.cell(0, 6, "Espaço reservado à Prefeitura para carimbo oficial, assinatura e validação documental.", ln=True, align='C')
+
     pdf.set_y(y_inicio + 95)
     pdf.set_font("Arial", "", 8)
     pdf.cell(0, 6, "(Não escrever ou colar nada nesta área)", ln=True, align='C')
 
     # Retorna ao preto
     pdf.set_text_color(0, 0, 0)
+
 
 def gerar_pdf(dados_envio):
     pdf = PDF()
@@ -170,10 +172,13 @@ def gerar_pdf(dados_envio):
     pdf.ln(10)
 
     # --- Section: Respostas do Checklist ---
+    if pdf.page_no() == 1:
+        pdf.add_page()
+
     pdf.set_fill_color(200, 220, 240)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font(FONT_NAME, style="B", size=16)
-    pdf.cell(0, 12, clean_text("4. Respostas do Checklist"), 0, 1, 'C', 1)
+    pdf.cell(0, 12, clean_text("4. Respostas do formulário"), 0, 1, 'C', 1)
     pdf.ln(8)
 
     try:
