@@ -31,13 +31,16 @@ def validar_cnpj(cnpj: str) -> bool:
 
 
 # Leitura da planilha
-json_path = os.path.join(os.path.dirname(__file__), "src", "aprovacao_lta", "dados", "checklist_perguntas.json")
-
-
-# Carrega os dados do JSON em um DataFrame
+# Carrega o JSON (estando na mesma pasta do app)
+json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
 with open(json_path, encoding="utf-8") as f:
-    dados_json = json.load(f)
-df = pd.DataFrame(dados_json)
+    df = pd.DataFrame(json.load(f))
+
+
+# # Carrega os dados do JSON em um DataFrame
+# with open(json_path, encoding="utf-8") as f:
+#     dados_json = json.load(f)
+# df = pd.DataFrame(dados_json)
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
 
@@ -160,8 +163,8 @@ st.markdown(
 )
 
 # Conecte ao Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 if st.button("📤 Enviar checklist"):
