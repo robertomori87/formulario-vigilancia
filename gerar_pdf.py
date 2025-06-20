@@ -185,6 +185,6 @@ def gerar_pdf(dados_envio):
     pdf.cell(0, 5, clean_text(dados_envio.get("nome_rt", "Nome do Responsável Técnico")), ln=True, align='C')
 
     buffer = BytesIO()
-    pdf.output(buffer, dest='S').encode('latin-1')  # se salvar como bytes diretamente
+    pdf.output(buffer, 'F')  # 'F' = grava no file-like object
     buffer.seek(0)
     return buffer
