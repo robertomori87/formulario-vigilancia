@@ -1,22 +1,33 @@
 from fpdf import FPDF
-import tempfile
-import base64
-import json
 from io import BytesIO
 from datetime import datetime
+import json
+
+# import tempfile
+# import base64
+
+
+class PDF(FPDF):
+    def __init__(self):
+        super().__init__()
+        self.add_page()
+        self.set_auto_page_break(auto=True, margin=15)
+        self.set_font("DejaVu", size=12)
+
 
 def gerar_pdf(dados_envio):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf = PDF()
+    
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("DejaVu", style="B", size=14)
 
-    pdf.cell(200, 10, txt="Checklist - LTA Saneantes", ln=True, align='C')
+    pdf.cell(0, 10, txt="Checklist - LTA Saneantes", ln=True, align='C')
     pdf.ln(10)
 
     def linha_rotulo_valor(rotulo, valor):
-        pdf.set_font("Arial", style="B", size=12)
+        pdf.set_font("DejaVu", style="B", size=12)
         pdf.cell(60, 10, f"{rotulo}:", ln=0)
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("DejaVu", size=12)
         pdf.multi_cell(0, 10, valor if valor else "-")
 
     for campo in [
@@ -27,18 +38,18 @@ def gerar_pdf(dados_envio):
         linha_rotulo_valor(campo.replace("_", " ").upper(), str(dados_envio.get(campo, "-")))
 
     pdf.ln(5)
-    pdf.set_font("Arial", style="B", size=12)
+    pdf.set_font("DejaVu", style="B", size=12)
     pdf.cell(0, 10, "Respostas:", ln=True)
 
     respostas = json.loads(dados_envio.get("respostas", "[]"))
     for r in respostas:
-        pdf.set_font("Arial", style="B", size=12)
+        pdf.set_font("DejaVu", style="B", size=12)
         pdf.multi_cell(0, 10, f"{r['id']}. {r['pergunta']}")
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("DejaVu", size=12)
         pdf.cell(0, 10, f"Resposta: {r['resposta']}", ln=True)
-        if r["justificativa"]:
+        if r.get("justificativa"):
             pdf.multi_cell(0, 10, f"Justificativa: {r['justificativa']}")
-        if r["comentario"]:
+        if r.get("comentario"):
             pdf.multi_cell(0, 10, f"Comentário: {r['comentario']}")
         pdf.ln(3)
 
@@ -48,6 +59,7 @@ def gerar_pdf(dados_envio):
     "janeiro", "fevereiro", "março", "abril", "maio", "junho",
     "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
     ]
+
     hoje = datetime.now()
     data_formatada = f"Sertãozinho - SP, {hoje.day} de {meses_pt[hoje.month - 1]} de {hoje.year}"
     pdf.cell(0, 10, data_formatada, ln=True, align='C')

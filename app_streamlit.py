@@ -218,7 +218,7 @@ if st.button("📤 Enviar checklist"):
         for erro in erros:
             st.markdown(f"- {erro}")
     else:
-        # Dados que serão enviados ao Supabase
+        # Montagem dos dados
         dados_envio = {
             "tipo_pessoa": tipo_pessoa,
             "razao_social": razao_social if tipo_pessoa == "Pessoa Jurídica" else None,
@@ -234,7 +234,7 @@ if st.button("📤 Enviar checklist"):
             "cpf_rt": cpf_rt,
             "nome_rl": nome_rl,
             "cpf_rl": cpf_rl,
-            "respostas": json.dumps(respostas)  # envia como string JSON
+            "respostas": json.dumps(respostas)
         }
 
         try:
@@ -242,16 +242,18 @@ if st.button("📤 Enviar checklist"):
             st.success("✅ Checklist enviado com sucesso!")
 
             pdf_buffer = gerar_pdf(dados_envio)
-            st.download_button("📥 Baixar PDF preenchido", data=pdf_buffer, file_name="checklist_lta.pdf", mime="application/pdf")
+
+            st.download_button(
+                label="📥 Baixar PDF preenchido",
+                data=pdf_buffer,
+                file_name="checklist_lta.pdf",
+                mime="application/pdf"
+            )
+
         except Exception as e:
             st.error("❌ Houve um erro ao salvar os dados. Tente novamente mais tarde.")
             st.caption(f"Erro técnico (para depuração): {e}")
 
-        # st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
-        # st.json(dados_envio)  # Mostra os dados simulados na tela para teste
 
-# if st.button("📤 Enviar checklist"):
-#     st.success("✅ Checklist validado com sucesso (dados não foram enviados ainda).")
-#     st.json(dados_envio)  # Mostra os dados simulados na tela para teste
 
 
