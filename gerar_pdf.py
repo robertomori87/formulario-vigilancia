@@ -5,7 +5,6 @@ import json
 import os # Import os for path handling
 
 # Define a path to your fonts directory
-# You can change this to where you store your .ttf files
 FONT_DIR = "fonts/" # Or "." if fonts are in the same directory as the script
 
 class PDF(FPDF):
@@ -14,23 +13,28 @@ class PDF(FPDF):
         self.add_page()
         self.set_auto_page_break(auto=True, margin=15)
 
-        # --- Load Unicode Font ---
-        # Ensure the font file exists at the specified path
-        # You might need to adjust the font filename based on what you download
         try:
+            # Carrega a fonte normal. O nome da fonte que você usará no set_font é "DejaVuSans"
             self.add_font("DejaVuSans", "", os.path.join(FONT_DIR, "DejaVuSans.ttf"), uni=True)
-            self.add_font("DejaVuSans", "B", os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf"), uni=True)
-            # If you only have one DejaVuSans.ttf, you might not have a separate Bold file.
-            # In that case, fpdf might try to synthesize bold, but a dedicated bold font is better.
-            # If DejaVuSans-Bold.ttf doesn't exist, remove this line or provide the correct path.
-        except RuntimeError as e:
-            print(f"Erro ao carregar fonte DejaVuSans: {e}. Verifique se os arquivos de fonte (.ttf) estão no diretório '{FONT_DIR}'.")
-            # Fallback to a standard font if custom font loading fails,
-            # but be aware that unicode characters might still cause issues.
-            self.set_font("Helvetica", size=10)
-            return
 
-        # Set the loaded Unicode font as the default
+            # Carrega a fonte negrito. É CRUCIAL que o segundo parâmetro seja "B"
+            # e que o nome do arquivo seja exatamente o correto.
+            self.add_font("DejaVuSans", "B", os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf"), uni=True)
+
+            # Carrega a fonte itálico (se você tiver o arquivo).
+            # self.add_font("DejaVuSans", "I", os.path.join(FONT_DIR, "DejaVuSans-Oblique.ttf"), uni=True)
+
+            # Carrega a fonte negrito itálico (se você tiver o arquivo).
+            # self.add_font("DejaVuSans", "BI", os.path.join(FONT_DIR, "DejaVuSans-BoldOblique.ttf"), uni=True)
+
+        except RuntimeError as e:
+            print(f"Erro ao carregar fonte DejaVuSans: {e}. Verifique se os arquivos de fonte (.ttf) estão no diretório '{FONT_DIR}' e os nomes estão corretos (case-sensitive).")
+            # Fallback para uma fonte padrão se a customizada falhar.
+            # No entanto, caracteres Unicode podem não ser exibidos corretamente.
+            self.set_font("Helvetica", size=10) # Usando Helvetica como fallback
+            return # Sai do __init__ para evitar erros posteriores com fontes não carregadas.
+
+        # Define a fonte padrão para o documento após o carregamento bem-sucedido
         self.set_font("DejaVuSans", size=10)
 
     def header(self):
