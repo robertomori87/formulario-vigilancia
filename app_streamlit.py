@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from supabase import create_client
 import os
+from gerar_pdf import gerar_pdf
 
 st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
 st.title("Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS")
@@ -138,7 +139,7 @@ for idx, row in df.iterrows():
         resposta = st.radio(
             "Selecione uma opção:",
             ["Atende", "Não atende", "Não se aplica (Não realiza a atividade)"],
-            index=None,
+            index=0,  # Atende será o valor padrão
             key=f"resposta_{idx}"
         )
 
@@ -203,6 +204,8 @@ if st.button("📤 Enviar checklist"):
     if not logradouro or not numero or not bairro or not cep:
         erros.append("❌ Endereço incompleto.")
 
+    razao_social = cnpj = nome_pf = cpf_pf = ""  # evita NameError
+
     # Validação das respostas do checklist
     for r in respostas:
         if not r["resposta"]:
@@ -222,7 +225,7 @@ if st.button("📤 Enviar checklist"):
             "cnpj": cnpj if tipo_pessoa == "Pessoa Jurídica" else None,
             "nome_pf": nome_pf if tipo_pessoa == "Pessoa Física" else None,
             "cpf_pf": cpf_pf if tipo_pessoa == "Pessoa Física" else None,
-            "logradouro": f"{logradouro_tipo} {logradouro}",
+            "logradouro": f"{logradouro_tipo or ''} {logradouro}".strip(),
             "numero": numero,
             "bairro": bairro,
             "cep": cep,
@@ -237,6 +240,9 @@ if st.button("📤 Enviar checklist"):
         try:
             supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
             st.success("✅ Checklist enviado com sucesso!")
+
+            pdf_buffer = gerar_pdf(dados_envio)
+            st.download_button("📥 Baixar PDF preenchido", data=pdf_buffer, file_name="checklist_lta.pdf", mime="application/pdf")
         except Exception as e:
             st.error("❌ Houve um erro ao salvar os dados. Tente novamente mais tarde.")
             st.caption(f"Erro técnico (para depuração): {e}")
