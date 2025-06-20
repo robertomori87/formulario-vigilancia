@@ -29,7 +29,6 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
 
     # Adiciona nova página
     pdf.add_page()
-    pdf.set_y(50)
 
     # Data formatada
     meses_pt = [
@@ -39,26 +38,32 @@ def gerar_ultima_pagina(pdf: FPDF, nome_rl: str, nome_rt: str):
     hoje = datetime.now()
     data_formatada = f"Sertãozinho - SP, {hoje.day} de {meses_pt[hoje.month - 1]} de {hoje.year}"
 
+    # Posiciona a data mais acima
+    pdf.set_y(30)
     pdf.set_font("Arial", size=11)
     pdf.cell(0, 10, data_formatada, ln=True, align='C')
-    pdf.ln(20)
+
+    # Volta para onde começam as assinaturas
+    pdf.set_y(50)
+
 
     # Assinatura do Responsável Legal
+    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=11)
     pdf.cell(0, 5, nome_rl or "Nome do Responsável Legal", ln=True, align='C')
     pdf.set_font("Arial", size=11)
     pdf.cell(0, 5, "Assinatura do Responsável Legal", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=12)
-    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
+    
     pdf.ln(30)  # <<< AQUI: espaço maior (antes era 20)
 
     # Assinatura do Responsável Técnico
+    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
     pdf.set_font("Arial", style="B", size=11)
     pdf.cell(0, 5, nome_rt or "Nome do Responsável Técnico", ln=True, align='C')
     pdf.set_font("Arial", size=11)
     pdf.cell(0, 5, "Assinatura do Responsável Técnico", ln=True, align='C')
-    pdf.set_font("Arial", style="B", size=12)
-    pdf.cell(0, 5, "___________________________________", ln=True, align='C')
+    pdf.set_font("Arial", style="B", size=12)    
     pdf.ln(25)  # Pequeno espaço antes da área de carimbo
 
     # Espaço reservado para carimbo

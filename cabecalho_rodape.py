@@ -41,9 +41,9 @@ def adicionar_cabecalho(pdf: FPDF):
 def adicionar_rodape(pdf: FPDF, pagina_atual: int):
     
     pdf.set_line_width(0.5)
-    pdf.line(10, 272, 200, 272)  # Linha um pouco mais para cima (antes: 277)
+    pdf.line(10, 277, 200, 277)  # Linha um pouco mais para cima (antes: 277)
 
-    pdf.set_y(-18)  # Também sobe a posição do texto
+    pdf.set_y(-15)  # Também sobe a posição do texto
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", "I", 8)
 
