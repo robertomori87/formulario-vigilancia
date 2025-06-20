@@ -3,6 +3,7 @@ from io import BytesIO
 from datetime import datetime
 import json
 import re
+from cabecalho_rodape import adicionar_cabecalho, adicionar_rodape
 
 # Definir a variável para o nome da fonte
 FONT_NAME = "Arial" # Usando Arial para compatibilidade total e evitar erros de fonte
@@ -18,15 +19,10 @@ class PDF(FPDF):
         self.set_font(FONT_NAME, size=10)
 
     def header(self):
-        self.set_font(FONT_NAME, 'B', 15)
-        self.cell(0, 10, "Checklist - LTA Saneantes", 0, 1, 'C')
-        self.ln(5)
+        adicionar_cabecalho(self)
 
     def footer(self):
-        self.set_y(-15)
-        self.set_font(FONT_NAME, 'I', 8)
-        self.set_text_color(128)
-        self.cell(0, 10, f'Página {self.page_no()}/{{nb}}', 0, 0, 'C')
+        adicionar_rodape(self, self.page_no(), self.alias_nb_pages())
 
 def gerar_pdf(dados_envio):
     pdf = PDF()
