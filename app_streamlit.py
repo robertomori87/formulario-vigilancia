@@ -100,7 +100,7 @@ else:
     with col1:
         nome_pf = st.text_input("Nome completo").upper()
     with col2:
-        cpf_pf = st.text_input(mensagem_cpf, help=ajuda_cpf)
+        cpf_pf = st.text_input(mensagem_cpf, help=ajuda_cpf, key="cpf_pf")
 
 
 st.subheader("Endereço do Estabelecimento")
@@ -136,14 +136,14 @@ col1, col2 = st.columns(2)
 with col1:
     nome_rt = st.text_input("Nome do RT").upper()
 with col2:
-    cpf_rt = st.text_input(mensagem_cpf, help=ajuda_cpf)
+    cpf_rt = st.text_input(mensagem_cpf, help=ajuda_cpf, key="cpf_rt")
 
 st.subheader("Responsável Legal")
 col1, col2 = st.columns(2)
 with col1:
     nome_rl = st.text_input("Nome do Responsável Legal").upper()
 with col2:
-    cpf_rl = st.text_input(mensagem_cpf, help=ajuda_cpf)
+    cpf_rl = st.text_input(mensagem_cpf, help=ajuda_cpf, key="cpf_rl")
 
 st.subheader("Questionário")
 
