@@ -30,3 +30,5 @@ start.sh
 DockerFile
 fly.toml
 Procfile
+
+.streamlit/secrets.toml
