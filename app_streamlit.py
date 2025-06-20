@@ -72,9 +72,14 @@ cnpj = ""
 nome_pf = ""
 cpf_pf = ""
 
-mensagem_cpf = "CPF (somente números)", help="Ex: 12345678901 ou 123.456.789-01"
-mensagem_cnpj = "CNPJ (somente números)", help="Ex: 12345678000195 ou 12.345.678/0001-95"
-mensagem_cep = "CEP (formato XXXXX-XXX)", help="Ex: 14020-000"
+mensagem_cpf = "CPF (somente números)"
+ajuda_cpf = "Ex: 12345678901 ou 123.456.789-01"
+
+mensagem_cnpj = "CNPJ (somente números)"
+ajuda_cnpj = "Ex: 12345678000195 ou 12.345.678/0001-95"
+
+mensagem_cep = "CEP (formato XXXXX-XXX)"
+ajuda_cep = "Ex: 14020-000"
 
 st.markdown("Preencha todos os dados do formulário abaixo.")
 
@@ -89,13 +94,14 @@ if tipo_pessoa == "Pessoa Jurídica":
     with col1:
         razao_social = st.text_input("Razão Social").upper()
     with col2:
-        cnpj = st.text_input(mensagem_cnpj)
+        cnpj = st.text_input(mensagem_cnpj, help=ajuda_cnpj)
 else:
     col1, col2 = st.columns(2)
     with col1:
         nome_pf = st.text_input("Nome completo").upper()
     with col2:
-        cpf_pf = st.text_input(mensagem_cpf)
+        cpf_pf = st.text_input(mensagem_cpf, help=ajuda_cpf)
+
 
 st.subheader("Endereço do Estabelecimento")
 
@@ -120,7 +126,7 @@ col1, col2 = st.columns(2)
 with col1:
     bairro = st.text_input("Bairro").upper()
 with col2:
-    cep = st.text_input(mensagem_cep)
+    cep = st.text_input(mensagem_cep, help=ajuda_cep)
 
 cidade = "SERTÃOZINHO-SP"
 st.text_input("Cidade", value=cidade, disabled=True)
@@ -130,14 +136,14 @@ col1, col2 = st.columns(2)
 with col1:
     nome_rt = st.text_input("Nome do RT").upper()
 with col2:
-    cpf_rt = st.text_input(mensagem_cpf)
+    cpf_rt = st.text_input(mensagem_cpf, help=ajuda_cpf)
 
 st.subheader("Responsável Legal")
 col1, col2 = st.columns(2)
 with col1:
     nome_rl = st.text_input("Nome do Responsável Legal").upper()
 with col2:
-    cpf_rl = st.text_input(mensagem_cpf)
+    cpf_rl = st.text_input(mensagem_cpf, help=ajuda_cpf)
 
 st.subheader("Questionário")
 
