@@ -38,7 +38,7 @@ json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
 with open(json_path, encoding="utf-8") as f:
     df = pd.DataFrame(json.load(f))
 
-st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", len(df))
+# st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", len(df))
 
 # # Carrega os dados do JSON em um DataFrame
 # with open(json_path, encoding="utf-8") as f:
@@ -48,7 +48,7 @@ st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", l
 
 
 
-st.markdown("Preencha o formulário abaixo com base nos itens aplicáveis ao seu projeto.")
+st.markdown("Preencha todos os dados do formulário abaixo.")
 
 st.header("Identificação do Estabelecimento")
 
