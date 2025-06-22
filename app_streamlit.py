@@ -6,7 +6,10 @@ import os
 import re
 from gerar_pdf import gerar_pdf
 
+# --- Antiga parte do st.set_page_config e st.title, agora dinâmica ---
+st.set_page_config(page_title="Laudo Técnico de Avaliação", layout="wide")
 
+# --- Fim da modificação ---
 
 # --- Nova parte: Seleção da Atividade e Carregamento do JSON ---
 @st.cache_data
@@ -44,6 +47,8 @@ atividade_selecionada_nome = st.sidebar.selectbox(
     index=0 # Define a primeira opção como padrão
 )
 
+
+
 # Pega o nome do arquivo JSON correspondente à atividade selecionada
 nome_do_arquivo_json = atividades_disponiveis[atividade_selecionada_nome]
 
@@ -55,11 +60,8 @@ nome_da_atividade = dados_atividade["nome_atividade"]
 df = pd.DataFrame(dados_atividade["perguntas"])
 # --- Fim da nova parte ---
 
-
-# --- Antiga parte do st.set_page_config e st.title, agora dinâmica ---
-st.set_page_config(page_title=f"Laudo Técnico de Avaliação - {nome_da_atividade}", layout="wide")
 st.title(f"Laudo Técnico de Avaliação - {nome_da_atividade}")
-# --- Fim da modificação ---
+
 
 def validar_cpf(cpf: str) -> bool:
     cpf = ''.join(filter(str.isdigit, cpf))
