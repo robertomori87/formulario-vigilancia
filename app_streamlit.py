@@ -6,8 +6,60 @@ import os
 import re
 from gerar_pdf import gerar_pdf
 
-st.set_page_config(page_title="Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS", layout="wide")
-st.title("Laudo Técnico de Avaliação - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS")
+
+
+# --- Nova parte: Seleção da Atividade e Carregamento do JSON ---
+@st.cache_data
+def carregar_dados_atividade(json_filename):
+    """
+    Carrega os dados de um arquivo JSON específico, incluindo o nome da atividade
+    e as perguntas.
+    """
+    json_path = os.path.join(os.path.dirname(__file__), json_filename)
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        st.error(f"Erro: O arquivo '{json_filename}' não foi encontrado.")
+        st.stop() # Para a execução do app se o arquivo não for encontrado
+    except json.JSONDecodeError:
+        st.error(f"Erro: O arquivo '{json_filename}' não é um JSON válido.")
+        st.stop()
+
+# Mapeamento dos tipos de atividade para seus respectivos arquivos JSON
+# Você pode expandir isso para incluir mais arquivos JSON conforme criar
+atividades_disponiveis = {
+    "INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS": "checklist_saneantes_domissanitarios.json",
+    #"INDÚSTRIA DE ALIMENTOS": "checklist_alimentos.json",
+    # Adicione mais aqui:
+    # "INDÚSTRIA DE COSMÉTICOS": "checklist_cosmeticos.json",
+}
+
+# Permite ao usuário selecionar a atividade
+# O valor padrão pode ser ajustado para a atividade mais comum ou a primeira da lista
+atividade_selecionada_nome = st.sidebar.selectbox(
+    "Selecione o tipo de atividade:",
+    list(atividades_disponiveis.keys()),
+    index=0 # Define a primeira opção como padrão
+)
+
+# Pega o nome do arquivo JSON correspondente à atividade selecionada
+nome_do_arquivo_json = atividades_disponiveis[atividade_selecionada_nome]
+
+# Carrega os dados do JSON da atividade selecionada
+dados_atividade = carregar_dados_atividade(nome_do_arquivo_json)
+
+# Extrai o nome da atividade e as perguntas
+nome_da_atividade = dados_atividade["nome_atividade"]
+df = pd.DataFrame(dados_atividade["perguntas"])
+# --- Fim da nova parte ---
+
+
+# --- Antiga parte do st.set_page_config e st.title, agora dinâmica ---
+st.set_page_config(page_title=f"Laudo Técnico de Avaliação - {nome_da_atividade}", layout="wide")
+st.title(f"Laudo Técnico de Avaliação - {nome_da_atividade}")
+# --- Fim da modificação ---
 
 def validar_cpf(cpf: str) -> bool:
     cpf = ''.join(filter(str.isdigit, cpf))
@@ -50,13 +102,13 @@ def formatar_cep(cep):
 
 # Leitura da planilha
 # Carrega o JSON (estando na mesma pasta do app)
-@st.cache_data
-def carregar_perguntas():
-    json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
-    with open(json_path, encoding="utf-8") as f:
-        return pd.DataFrame(json.load(f))
+# @st.cache_data
+# def carregar_perguntas():
+#     json_path = os.path.join(os.path.dirname(__file__), "checklist_perguntas.json")
+#     with open(json_path, encoding="utf-8") as f:
+#         return pd.DataFrame(json.load(f))
 
-df = carregar_perguntas()
+# df = carregar_perguntas()
 
 # st.write("DEBUG: JSON carregado com sucesso! Número de linhas no DataFrame:", len(df))
 
@@ -264,8 +316,10 @@ if st.button("📤 Enviar checklist"):
             "cpf_rt": formatar_cpf(cpf_rt),
             "nome_rl": nome_rl,
             "cpf_rl": formatar_cpf(cpf_rl),
-            "respostas": json.dumps(respostas)
+            "respostas": json.dumps(respostas),
+            "atividade": nome_da_atividade # Adicionamos o nome da atividade aqui
         }
+        
 
         try:
             supabase.table("checklist_lta_respostas").insert(dados_envio).execute()
@@ -276,7 +330,7 @@ if st.button("📤 Enviar checklist"):
             st.download_button(
                 label="📥 Baixar PDF preenchido",
                 data=pdf_buffer,
-                file_name="checklist_lta.pdf",
+                file_name=f"laudo_{nome_da_atividade.replace(' ', '_').lower()}.pdf", # Nome do PDF também dinâmico
                 mime="application/pdf"
             )
 

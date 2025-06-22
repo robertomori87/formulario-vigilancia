@@ -106,7 +106,10 @@ def gerar_pdf(dados_envio):
     # --- Document Title ---
     pdf.set_font(FONT_NAME, style="B", size=18)
     pdf.set_text_color(0, 50, 100)
-    pdf.cell(0, 15, txt=clean_text("LTA - INDÚSTRIA DE SANEANTES DOMISSANITÁRIOS"), ln=True, align='C')
+
+    # >>> MODIFICAÇÃO AQUI: Obtendo o nome da atividade de dados_envio
+    atividade_nome = clean_text(dados_envio.get("atividade", "ATIVIDADE DESCONHECIDA"))
+    pdf.cell(0, 15, txt=f"LTA - {atividade_nome}", ln=True, align='C') # Usando f-string para o título
     pdf.ln(10)
 
     # --- Section: Dados Cadastrais ---
