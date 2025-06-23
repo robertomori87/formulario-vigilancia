@@ -15,17 +15,23 @@ st.set_page_config(page_title="Laudo Técnico de Avaliação", layout="wide")
 @st.cache_data
 def carregar_dados_atividade(json_filename):
     """
-    Carrega os dados de um arquivo JSON específico, incluindo o nome da atividade
-    e as perguntas.
+    Carrega os dados de um arquivo JSON específico da pasta 'atividades',
+    incluindo o nome da atividade e as perguntas.
     """
-    json_path = os.path.join(os.path.dirname(__file__), json_filename)
+    # --- MODIFICADO: Construir o caminho para a pasta 'atividades' ---
+    # Obtém o diretório do script atual
+    current_script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Define o caminho completo para o arquivo JSON dentro da pasta 'atividades'
+    json_path = os.path.join(current_script_dir, "atividades", json_filename)
+    # ------------------------------------------------------------------
+
     try:
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
         return data
     except FileNotFoundError:
-        st.error(f"Erro: O arquivo '{json_filename}' não foi encontrado.")
-        st.stop() # Para a execução do app se o arquivo não for encontrado
+        st.error(f"Erro: O arquivo '{json_filename}' não foi encontrado na pasta 'atividades'.")
+        st.stop()
     except json.JSONDecodeError:
         st.error(f"Erro: O arquivo '{json_filename}' não é um JSON válido.")
         st.stop()
